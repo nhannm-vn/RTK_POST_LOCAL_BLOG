@@ -29,6 +29,9 @@ export default function CreatePost() {
     const formDataWithId = { ...formData, id: new Date().toISOString() }
     console.log(formDataWithId)
     dispatch(addPost(formDataWithId))
+    // Sau khi thêm dữ liệu rồi thì làm sạch các ô nhập
+    //bằng cách set lại formData
+    setFormData(initialState)
   }
 
   return (
