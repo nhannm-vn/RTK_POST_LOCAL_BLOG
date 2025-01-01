@@ -38,7 +38,7 @@ const blogReducer = createReducer(initalState, (builder) => {
       //*Lưu ý trường hợp không tìm thấy. Nên cần thêm cái if
       //  để chắc chắn rằng tìm thấy
       if (foundPostIndex !== -1) {
-        state.postList.slice(foundPostIndex, 1)
+        state.postList.splice(foundPostIndex, 1)
       }
     })
 })

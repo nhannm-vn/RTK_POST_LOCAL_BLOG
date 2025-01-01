@@ -1,11 +1,22 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import PostItem from '../PostItem'
 import { RootState } from 'store'
+import { deletePost } from 'pages/blog/blog.reducer'
 
 export default function PostList() {
   // Dùng hook useSelector để lấy dữ liệu
   // lấy cái nào thì return cái đó
   const postList = useSelector((state: RootState) => state.blog.postList)
+
+  // Vì item post là nhỏ nhất rồi. Nên là nên viết hàm xóa ở postList rồi
+  // truyền xuống thì hay hơn
+
+  const dispatch = useDispatch()
+
+  // Hàm xóa. Viết ở đây xong truyền để xài cho từng item
+  const handleDelete = (postId: string) => {
+    dispatch(deletePost(postId))
+  }
 
   return (
     <div className='bg-white py-6 sm:py-8 lg:py-12'>
@@ -18,7 +29,7 @@ export default function PostList() {
         </div>
         <div className='grid gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-2 xl:grid-cols-2 xl:gap-8'>
           {postList.map((post) => (
-            <PostItem post={post} key={post.id} />
+            <PostItem post={post} key={post.id} handleDelete={handleDelete} />
           ))}
         </div>
       </div>
