@@ -1,4 +1,19 @@
+import { useState } from 'react'
+import Post from 'types/blog.type'
+
+const initialState: Post = {
+  id: '',
+  description: '',
+  featuredImage: '',
+  publishDate: '',
+  published: false, // chưa public
+  title: ''
+}
+
 export default function CreatePost() {
+  // Tạo cái state để lưu dữ liệu post từ form
+  const [formData, setFormData] = useState<Post>(initialState)
+
   return (
     <form>
       <div className='mb-6'>
