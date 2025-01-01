@@ -1,4 +1,6 @@
+import { addPost } from 'pages/blog/blog.reducer'
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import Post from 'types/blog.type'
 
 const initialState: Post = {
@@ -14,8 +16,23 @@ export default function CreatePost() {
   // Tạo cái state để lưu dữ liệu post từ form
   const [formData, setFormData] = useState<Post>(initialState)
 
+  // Tạo dispatch chuyên dùng để cập nhật dữ liệu của redux
+
+  const dispatch = useDispatch()
+
+  // Khi submmit thì chạy cái func này để lấy dữ liệu từ form
+  //và sử dụng dispatch
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    // Ngăn load lại
+    event.preventDefault()
+    // Thêm id cho cục data form trước khi cập nhật lên
+    const formDataWithId = { ...formData, id: new Date().toISOString() }
+    console.log(formDataWithId)
+    dispatch(addPost(formDataWithId))
+  }
+
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className='mb-6'>
         <label htmlFor='title' className='mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300'>
           Title
