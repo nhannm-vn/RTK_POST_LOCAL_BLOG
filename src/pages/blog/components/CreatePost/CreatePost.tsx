@@ -1,4 +1,4 @@
-import { addPost, cancelEditingPost } from 'pages/blog/blog.reducer'
+import { addPost, cancelEditingPost, finishEditingPost } from 'pages/blog/blog.reducer'
 import React, { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'store'
@@ -35,10 +35,14 @@ export default function CreatePost() {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     // Ngăn load lại
     event.preventDefault()
-    // Thêm id cho cục data form trước khi cập nhật lên
-    const formDataWithId = { ...formData, id: new Date().toISOString() }
-    console.log(formDataWithId)
-    dispatch(addPost(formDataWithId))
+    if (editingPost) {
+      dispatch(finishEditingPost(formData)) // truyền vào cái Post mới nhất trên form
+    } else {
+      // Thêm id cho cục data form trước khi cập nhật lên
+      const formDataWithId = { ...formData, id: new Date().toISOString() }
+      console.log(formDataWithId)
+      dispatch(addPost(formDataWithId))
+    }
     // Sau khi thêm dữ liệu rồi thì làm sạch các ô nhập
     //bằng cách set lại formData
     setFormData(initialState)

@@ -67,7 +67,7 @@ const blogReducer = createReducer(initalState, (builder) => {
       const postId = action.payload.id
       state.postList.find((post, index) => {
         if (post.id === postId) {
-          state.postList[index] = post
+          state.postList[index] = action.payload
           return true
         }
         return false
