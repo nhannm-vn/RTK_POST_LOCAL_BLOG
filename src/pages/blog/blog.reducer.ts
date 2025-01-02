@@ -45,6 +45,13 @@ const blogReducer = createReducer(initalState, (builder) => {
         state.postList.splice(foundPostIndex, 1)
       }
     })
+    .addCase(startEditingPost, (state, action) => {
+      const postId = action.payload
+      // Tìm nó dựa vào Id. Nếu không có thì vẫn cho nó là null
+      const foundPost = state.postList.find((post) => post.id === postId) || null
+      // Lưu nó vào state editingPost
+      state.editingPost = foundPost
+    })
 })
 
 export default blogReducer
