@@ -6,20 +6,24 @@ import Post from 'types/blog.type'
 
 interface BlogState {
   postList: Post[]
+  editingPost: Post | null // giúp nhận biết khi nào edit
 }
 
 const initalState: BlogState = {
-  postList: initalPostList
+  postList: initalPostList,
+  editingPost: null
 }
 
 // Tạo action:
 // Thêm
 export const addPost = createAction<Post>('blog/addPost')
+//<Post>: là định dạng cho kiểu dữ liệu gửi lên payload
 
 // Xóa
 export const deletePost = createAction<string>('blog/deletePost')
 
-//<Post>: là định dạng cho kiểu dữ liệu gửi lên payload
+// Editing
+export const startEditingPost = createAction<string>('blog/startEditingPost')
 
 const blogReducer = createReducer(initalState, (builder) => {
   builder
