@@ -29,6 +29,9 @@ export const startEditingPost = createAction<string>('blog/startEditingPost')
 //_Chỉ cần set lại thằng editingPost của redux là được
 export const cancelEditingPost = createAction('blog/cancelEditingPost')
 
+// Finishediting Post
+export const finishEditingPost = createAction<Post>('blog/finishEditingPost')
+
 const blogReducer = createReducer(initalState, (builder) => {
   builder
     .addCase(addPost, (state, action) => {
@@ -57,6 +60,19 @@ const blogReducer = createReducer(initalState, (builder) => {
       state.editingPost = foundPost
     })
     .addCase(cancelEditingPost, (state) => {
+      state.editingPost = null
+    })
+    .addCase(finishEditingPost, (state, action) => {
+      // Lấy id
+      const postId = action.payload.id
+      state.postList.find((post, index) => {
+        if (post.id === postId) {
+          state.postList[index] = post
+          return true
+        }
+        return false
+      })
+      // Sau khi hoàn tất update thì mình cũng làm sạch sẽ cái form
       state.editingPost = null
     })
 })
