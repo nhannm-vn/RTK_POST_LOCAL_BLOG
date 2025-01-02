@@ -25,6 +25,10 @@ export const deletePost = createAction<string>('blog/deletePost')
 // Editing
 export const startEditingPost = createAction<string>('blog/startEditingPost')
 
+// Cancel editing
+//_Chỉ cần set lại thằng editingPost của redux là được
+export const cancelEditingPost = createAction('blog/cancelEditingPost')
+
 const blogReducer = createReducer(initalState, (builder) => {
   builder
     .addCase(addPost, (state, action) => {
@@ -51,6 +55,9 @@ const blogReducer = createReducer(initalState, (builder) => {
       const foundPost = state.postList.find((post) => post.id === postId) || null
       // Lưu nó vào state editingPost
       state.editingPost = foundPost
+    })
+    .addCase(cancelEditingPost, (state) => {
+      state.editingPost = null
     })
 })
 
