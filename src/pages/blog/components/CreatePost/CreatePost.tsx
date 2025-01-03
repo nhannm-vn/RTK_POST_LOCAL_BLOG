@@ -39,9 +39,9 @@ export default function CreatePost() {
       dispatch(finishEditingPost(formData)) // truyền vào cái Post mới nhất trên form
     } else {
       // Thêm id cho cục data form trước khi cập nhật lên
-      const formDataWithId = { ...formData, id: new Date().toISOString() }
-      console.log(formDataWithId)
-      dispatch(addPost(formDataWithId))
+      // const formDataWithId = { ...formData, id: new Date().toISOString() }
+      // console.log(formDataWithId)
+      dispatch(addPost(formData))
     }
     // Sau khi thêm dữ liệu rồi thì làm sạch các ô nhập
     //bằng cách set lại formData

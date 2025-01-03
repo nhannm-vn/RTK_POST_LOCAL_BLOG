@@ -1,4 +1,4 @@
-import { createAction, createReducer, current } from '@reduxjs/toolkit'
+import { createAction, createReducer, current, nanoid } from '@reduxjs/toolkit'
 import { initalPostList } from 'constants/blog'
 import Post from 'types/blog.type'
 
@@ -16,7 +16,14 @@ const initalState: BlogState = {
 
 // Tạo action:
 // Thêm
-export const addPost = createAction<Post>('blog/addPost')
+export const addPost = createAction('blog/addPost', (post: Omit<Post, 'id'>) => {
+  return {
+    payload: {
+      id: nanoid(),
+      ...post
+    }
+  }
+})
 //<Post>: là định dạng cho kiểu dữ liệu gửi lên payload
 
 // Xóa
