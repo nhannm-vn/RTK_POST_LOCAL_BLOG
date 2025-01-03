@@ -1,4 +1,4 @@
-import { createAction, createReducer } from '@reduxjs/toolkit'
+import { createAction, createReducer, current } from '@reduxjs/toolkit'
 import { initalPostList } from 'constants/blog'
 import Post from 'types/blog.type'
 
@@ -75,6 +75,13 @@ const blogReducer = createReducer(initalState, (builder) => {
       // Sau khi hoàn tất update thì mình cũng làm sạch sẽ cái form
       state.editingPost = null
     })
+    // Nếu như cái func đầu trả ra true thì callback đằng sau mới bắt đầu chạy
+    .addMatcher(
+      (action) => action.type.includes('cancel'),
+      (state, action) => {
+        console.log(current(state))
+      }
+    )
 })
 
 export default blogReducer
