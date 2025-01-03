@@ -16,11 +16,11 @@ const initalState: BlogState = {
 
 // Tạo action:
 // Thêm
-export const addPost = createAction('blog/addPost', (post: Omit<Post, 'id'>) => {
+export const addPost = createAction('blog/addPost', function (post: Omit<Post, 'id'>) {
   return {
     payload: {
-      id: nanoid(),
-      ...post
+      ...post,
+      id: nanoid()
     }
   }
 })
