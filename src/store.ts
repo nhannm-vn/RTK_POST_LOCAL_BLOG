@@ -1,6 +1,6 @@
 // File dùng để setup rtk cho dự án
 import { configureStore } from '@reduxjs/toolkit'
-import blogReducer from 'pages/blog/blog.reducer'
+import blogReducer from 'pages/blog/blog.slice'
 
 export const store = configureStore({
   reducer: { blog: blogReducer }
