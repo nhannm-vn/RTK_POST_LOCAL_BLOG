@@ -14,6 +14,8 @@ const initialState: BlogState = {
   editingPost: null
 }
 
+//ahihi
+
 // Tạo action:
 // Thêm
 // export const addPost = createAction('blog/addPost', function (post: Omit<Post, 'id'>) {
