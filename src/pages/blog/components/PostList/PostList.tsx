@@ -3,6 +3,7 @@ import PostItem from '../PostItem'
 import { RootState } from 'store'
 import { deletePost, startEditingPost } from 'pages/blog/blog.slice'
 import { useEffect } from 'react'
+import http from 'utils/http'
 
 export default function PostList() {
   // Dùng hook useSelector để lấy dữ liệu
@@ -11,6 +12,31 @@ export default function PostList() {
   const dispatch = useDispatch()
 
   // Call API
+  useEffect(() => {
+    // Giúp chặn khi thằng người dùng spam request liên tục
+    const controller = new AbortController()
+    http.instance
+      .get('posts', {
+        signal: controller.signal
+      })
+      .then((res) => {
+        console.log(res)
+        const postsList = res.data
+        dispatch({ type: 'blog/getPostListSuccess', payload: postsList })
+      })
+      // Nếu không có catch thì khi cancel sẽ bể màn hình
+      .catch((err) => {
+        // Vì mình hủy bớt 1 request thì nó sẽ báo lỗi. Mà lỗi đó thì bỏ qua chứ k có coi như action fail
+        //nghĩa là lỗi khác thì mới coi như là hành động fail
+        if (err.code !== 'ERR_CANCELED') {
+          dispatch({ type: 'blog/getPostListFailed', payload: err })
+        }
+      })
+    // clear func: cancel request
+    return () => {
+      controller.abort()
+    }
+  }, [dispatch])
 
   // Vì item post là nhỏ nhất rồi. Nên là nên viết hàm xóa ở postList rồi
   // truyền xuống thì hay hơn
