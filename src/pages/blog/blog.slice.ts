@@ -10,7 +10,7 @@ interface BlogState {
 }
 
 const initialState: BlogState = {
-  postList: initalPostList,
+  postList: [],
   editingPost: null
 }
 
@@ -95,6 +95,10 @@ const blogSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Vì bên kia action mình để {} và không có generate nên sẽ viết trong đây
+      .addCase('blog/getPostListSuccess', (state, action: any) => {
+        state.postList = action.payload
+      })
       .addMatcher(
         (action) => action.type.includes('cancel'),
         (state, action) => {
@@ -110,60 +114,3 @@ const blogSlice = createSlice({
 export const { addPost, cancelEditingPost, deletePost, finishEditingPost, startEditingPost } = blogSlice.actions
 const blogReducer = blogSlice.reducer
 export default blogReducer
-
-// const blogReducer = createReducer(initialState, (builder) => {
-//   builder
-//     .addCase(addPost, (state, action) => {
-//       // immerjs
-//       // immerjs: giúp cho chúng ta mutate một state an toàn
-//       const post = action.payload
-//       state.postList.push(post)
-//     })
-//     .addCase(deletePost, (state, action) => {
-//       // Lấy id từ action. Id nằm trong payload của action
-//       const postId = action.payload
-//       // Tìm vịt trí của thằng muốn xóa
-//       const foundPostIndex = state.postList.findIndex((item) => item.id === postId)
-//       // Xóa nó theo kiểu mutate luôn
-//       //*Lưu ý trường hợp không tìm thấy. Nên cần thêm cái if
-//       //  để chắc chắn rằng tìm thấy
-//       if (foundPostIndex !== -1) {
-//         state.postList.splice(foundPostIndex, 1)
-//       }
-//     })
-//     .addCase(startEditingPost, (state, action) => {
-//       const postId = action.payload
-//       // Tìm nó dựa vào Id. Nếu không có thì vẫn cho nó là null
-//       const foundPost = state.postList.find((post) => post.id === postId) || null
-//       // Lưu nó vào state editingPost
-//       state.editingPost = foundPost
-//     })
-//     .addCase(cancelEditingPost, (state) => {
-//       state.editingPost = null
-//     })
-//     .addCase(finishEditingPost, (state, action) => {
-//       // Lấy id
-//       const postId = action.payload.id
-//       state.postList.find((post, index) => {
-//         if (post.id === postId) {
-//           state.postList[index] = action.payload
-//           return true
-//         }
-//         return false
-//       })
-//       // Sau khi hoàn tất update thì mình cũng làm sạch sẽ cái form
-//       state.editingPost = null
-//     })
-//     // Nếu như cái func đầu trả ra true thì callback đằng sau mới bắt đầu chạy
-//     .addMatcher(
-//       (action) => action.type.includes('cancel'),
-//       (state, action) => {
-//         console.log(current(state))
-//       }
-//     )
-// })
-
-// export default blogReducer
-
-//initalState: giá trị khời tạo của state
-//builderCallback: nơi xử lí các action và xử lí cập nhật state
