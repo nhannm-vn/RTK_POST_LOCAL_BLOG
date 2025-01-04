@@ -1,4 +1,4 @@
-import { createAction, createReducer, createSlice, current, nanoid, PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, current, nanoid, PayloadAction } from '@reduxjs/toolkit'
 import { initalPostList } from 'constants/blog'
 import Post from 'types/blog.type'
 
@@ -92,6 +92,18 @@ const blogSlice = createSlice({
         }
       })
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(
+        (action) => action.type.includes('cancel'),
+        (state, action) => {
+          console.log(`action type: blog/cancel`, current(state))
+        }
+      )
+      .addDefaultCase((state, action) => {
+        console.log(`action type: ${action.type}`, current(state))
+      })
   }
 })
 
