@@ -1,6 +1,7 @@
-import { addPost, cancelEditingPost, finishEditingPost } from 'pages/blog/blog.slice'
+import { omit } from 'lodash'
+import { addPost, cancelEditingPost, updatePost } from 'pages/blog/blog.slice'
 import React, { Fragment, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { RootState, useAppDispatch } from 'store'
 import Post from 'types/blog.type'
 
@@ -36,12 +37,12 @@ export default function CreatePost() {
     // Ngăn load lại
     event.preventDefault()
     if (editingPost) {
-      dispatch(finishEditingPost(formData)) // truyền vào cái Post mới nhất trên form
+      dispatch(updatePost({ postId: editingPost.id, body: formData })) // truyền vào cái Post mới nhất trên form
     } else {
       // Thêm id cho cục data form trước khi cập nhật lên
       // const formDataWithId = { ...formData, id: new Date().toISOString() }
       // console.log(formDataWithId)
-      dispatch(addPost(formData))
+      dispatch(addPost(omit(formData, ['id'])))
     }
     // Sau khi thêm dữ liệu rồi thì làm sạch các ô nhập
     //bằng cách set lại formData
