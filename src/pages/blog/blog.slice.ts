@@ -1,6 +1,7 @@
-import { createSlice, current, nanoid, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, current, nanoid, PayloadAction } from '@reduxjs/toolkit'
 import { initalPostList } from 'constants/blog'
 import Post from 'types/blog.type'
+import http from 'utils/http'
 
 // File chua cac state duoc luu trong reducer
 
@@ -40,7 +41,21 @@ const initialState: BlogState = {
 
 // Finishediting Post
 // export const finishEditingPost = createAction<Post>('blog/finishEditingPost')
+// ----------------------------------------------------------
 
+// *Lưu ý phải dùng ở extraReducer
+export const getPostList = createAsyncThunk(
+  'blog/getPostList', //
+  async (_, thunkAPI) => {
+    const response = await http.instance.get<Post[]>('posts', {
+      // Hủy resend 2 lần
+      signal: thunkAPI.signal
+    })
+    return response.data
+  }
+)
+
+// ----------------------------------------------------------
 const blogSlice = createSlice({
   name: 'blog',
   initialState,
@@ -97,10 +112,12 @@ const blogSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Vì bên kia action mình để {} và không có generate nên sẽ viết trong đây
-      .addCase('blog/getPostListSuccess', (state, action: any) => {
-        state.postList = action.payload
-      })
+      .addCase(
+        getPostList.fulfilled, //
+        (state, action) => {
+          state.postList = action.payload
+        }
+      )
       .addMatcher(
         (action) => action.type.includes('cancel'),
         (state, action) => {
