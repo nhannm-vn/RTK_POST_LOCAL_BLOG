@@ -1,7 +1,7 @@
 import { addPost, cancelEditingPost, finishEditingPost } from 'pages/blog/blog.slice'
 import React, { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from 'store'
+import { RootState, useAppDispatch } from 'store'
 import Post from 'types/blog.type'
 
 const initialState: Post = {
@@ -19,7 +19,7 @@ export default function CreatePost() {
 
   // Tạo dispatch chuyên dùng để cập nhật dữ liệu của redux
 
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   // Lấy editingPost từ state redux
   const editingPost = useSelector((state: RootState) => state.blog.editingPost)

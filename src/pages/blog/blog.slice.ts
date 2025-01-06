@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, current, nanoid, PayloadAction } from '@reduxjs/toolkit'
-import { initalPostList } from 'constants/blog'
+// import { initalPostList } from 'constants/blog'
 import Post from 'types/blog.type'
 import http from 'utils/http'
 
@@ -47,7 +47,18 @@ const initialState: BlogState = {
 export const getPostList = createAsyncThunk(
   'blog/getPostList', //
   async (_, thunkAPI) => {
-    const response = await http.instance.get<Post[]>('posts', {
+    const response = await http.get<Post[]>('posts', {
+      // Hủy resend 2 lần
+      signal: thunkAPI.signal
+    })
+    return response.data
+  }
+)
+
+export const addPost = createAsyncThunk(
+  'blog/addPost', //
+  async (body: Omit<Post, 'id'>, thunkAPI) => {
+    const response = await http.post<Post>('posts', body, {
       // Hủy resend 2 lần
       signal: thunkAPI.signal
     })
@@ -94,21 +105,21 @@ const blogSlice = createSlice({
       })
       // Sau khi hoàn tất update thì mình cũng làm sạch sẽ cái form
       state.editingPost = null
-    },
-    addPost: {
-      reducer: (state, action: PayloadAction<Post>) => {
-        // immerjs
-        // immerjs: giúp cho chúng ta mutate một state an toàn
-        const post = action.payload
-        state.postList.push(post)
-      },
-      prepare: (post: Omit<Post, 'id'>) => ({
-        payload: {
-          ...post,
-          id: nanoid()
-        }
-      })
     }
+    // addPost: {
+    //   reducer: (state, action: PayloadAction<Post>) => {
+    //     // immerjs
+    //     // immerjs: giúp cho chúng ta mutate một state an toàn
+    //     const post = action.payload
+    //     state.postList.push(post)
+    //   },
+    //   prepare: (post: Omit<Post, 'id'>) => ({
+    //     payload: {
+    //       ...post,
+    //       id: nanoid()
+    //     }
+    //   })
+    // }
   },
   extraReducers: (builder) => {
     builder
@@ -116,6 +127,13 @@ const blogSlice = createSlice({
         getPostList.fulfilled, //
         (state, action) => {
           state.postList = action.payload
+        }
+      )
+      .addCase(
+        addPost.fulfilled, //
+        (state, action) => {
+          // Thêm vào mảng
+          state.postList.push(action.payload)
         }
       )
       .addMatcher(
@@ -130,6 +148,6 @@ const blogSlice = createSlice({
   }
 })
 
-export const { addPost, cancelEditingPost, deletePost, finishEditingPost, startEditingPost } = blogSlice.actions
+export const { cancelEditingPost, deletePost, finishEditingPost, startEditingPost } = blogSlice.actions
 const blogReducer = blogSlice.reducer
 export default blogReducer
