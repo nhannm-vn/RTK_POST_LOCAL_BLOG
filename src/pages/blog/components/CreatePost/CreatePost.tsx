@@ -59,9 +59,6 @@ export default function CreatePost() {
         <label
           htmlFor='title' //
           className='mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300'
-          onClick={() => {
-            dispatch({ type: 'blog/cancel' })
-          }}
         >
           Title
         </label>
