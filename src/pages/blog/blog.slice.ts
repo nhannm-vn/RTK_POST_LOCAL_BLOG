@@ -8,11 +8,21 @@ import http from 'utils/http'
 interface BlogState {
   postList: Post[]
   editingPost: Post | null // giúp nhận biết khi nào edit
+  loading: boolean
+  currentRequestId: undefined | string
 }
 
 const initialState: BlogState = {
   postList: [],
-  editingPost: null
+  editingPost: null,
+  loading: false, // giúp check khi nào hiển thị skeleton
+  currentRequestId: undefined
+  // Khi mỗi action pending thực hiện nó sẽ check coi đúng id pending của nó không
+  //và mỗi action pending có một id duy nhất. Nếu không nhờ vào thằng id này để check
+  //thì nó sẽ bị tình trạng hủy và set loading về false ngay lập tức do mình có cái abort(lúc getPostList)
+  //dẫn tới skeleton sẽ không xuất hiện
+  //==> giải pháp là mỗi lần pending thì mình sẽ set cái id current vào cho state đó để check trước khi chuyển loading thành false
+  //nghĩa là chỉ có thằng action nào có id của pending hiện tại thì mới set state
 }
 
 // Định nghĩa ts
@@ -185,10 +195,24 @@ const blogSlice = createSlice({
         }
       )
       // Nghĩa là cái nào đúng thì làm
-      .addMatcher(
-        (action) => action.type.includes('cancel'),
+      .addMatcher<PendingAction>(
+        // Thằng nào mà có trạng thái là pending
+        //và có đuôi type action là pending thì làm
+        (action) => action.type.endsWith('/pending'),
         (state, action) => {
-          console.log(`action type: blog/cancel`, current(state))
+          state.loading = true
+        }
+      )
+      .addMatcher<RejectedAction>(
+        (action) => action.type.endsWith('/rejected'),
+        (state, action) => {
+          state.loading = false // tắt skeleton
+        }
+      )
+      .addMatcher<FulfilledAction>(
+        (action) => action.type.endsWith('/fulfilled'),
+        (state, action) => {
+          state.loading = false // tắt skeleton
         }
       )
       .addDefaultCase((state, action) => {
