@@ -2,13 +2,17 @@ import { useSelector } from 'react-redux'
 import PostItem from '../PostItem'
 import { RootState, useAppDispatch } from 'store'
 import { deletePost, getPostList, startEditingPost } from 'pages/blog/blog.slice'
-import { useEffect } from 'react'
+import { Fragment, useEffect } from 'react'
+import SkeletonPost from '../SkeletonPost'
 // import http from 'utils/http'
 
 export default function PostList() {
   // Dùng hook useSelector để lấy dữ liệu
   // lấy cái nào thì return cái đó
   const postList = useSelector((state: RootState) => state.blog.postList)
+  // Lấy state loading từ redux ra
+  const loading = useSelector((state: RootState) => state.blog.loading)
+
   const dispatch = useAppDispatch()
 
   // Call API
@@ -41,14 +45,21 @@ export default function PostList() {
           </p>
         </div>
         <div className='grid gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-2 xl:grid-cols-2 xl:gap-8'>
-          {postList.map((post) => (
-            <PostItem
-              post={post}
-              key={post.id} //
-              handleDelete={handleDelete}
-              handleStartEditing={handleStartEditing}
-            />
-          ))}
+          {loading && (
+            <Fragment>
+              <SkeletonPost />
+              <SkeletonPost />
+            </Fragment>
+          )}
+          {!loading &&
+            postList.map((post) => (
+              <PostItem
+                post={post}
+                key={post.id} //
+                handleDelete={handleDelete}
+                handleStartEditing={handleStartEditing}
+              />
+            ))}
         </div>
       </div>
     </div>
