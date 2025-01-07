@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, current, nanoid, PayloadAction } from '@reduxjs/toolkit'
+import { AsyncThunk, createAsyncThunk, createSlice, current, nanoid, PayloadAction } from '@reduxjs/toolkit'
 // import { initalPostList } from 'constants/blog'
 import Post from 'types/blog.type'
 import http from 'utils/http'
@@ -15,7 +15,13 @@ const initialState: BlogState = {
   editingPost: null
 }
 
-//ahihi
+// Định nghĩa ts
+// Giúp bổ xung định nghĩa ts
+type GenericAsyncThunk = AsyncThunk<unknown, unknown, any>
+
+type PendingAction = ReturnType<GenericAsyncThunk['pending']>
+type RejectedAction = ReturnType<GenericAsyncThunk['rejected']>
+type FulfilledAction = ReturnType<GenericAsyncThunk['fulfilled']>
 
 // Tạo action:
 // Thêm
@@ -178,6 +184,7 @@ const blogSlice = createSlice({
           state.postList = state.postList.filter((post) => post.id !== action.meta.arg)
         }
       )
+      // Nghĩa là cái nào đúng thì làm
       .addMatcher(
         (action) => action.type.includes('cancel'),
         (state, action) => {
