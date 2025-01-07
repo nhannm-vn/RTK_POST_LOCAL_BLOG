@@ -201,18 +201,27 @@ const blogSlice = createSlice({
         (action) => action.type.endsWith('/pending'),
         (state, action) => {
           state.loading = true
+          // set currentRequestId
+          // Nghĩa là chỉ có 1 id duy nhất được lưu. Ai chạy sau thì được lưu
+          state.currentRequestId = action.meta.requestId
         }
       )
       .addMatcher<RejectedAction>(
         (action) => action.type.endsWith('/rejected'),
         (state, action) => {
-          state.loading = false // tắt skeleton
+          // Nếu action có id đúng là của state currentReqestId thì mới set loading về false
+          //nghĩa thằng thằng onFulFil hay onRejected đang thực hiện thằng có id đang pending sau cùng
+          if (state.loading && state.currentRequestId === action.meta.requestId) {
+            state.loading = false // tắt skeleton
+          }
         }
       )
       .addMatcher<FulfilledAction>(
         (action) => action.type.endsWith('/fulfilled'),
         (state, action) => {
-          state.loading = false // tắt skeleton
+          if (state.loading && state.currentRequestId === action.meta.requestId) {
+            state.loading = false // tắt skeleton
+          }
         }
       )
       .addDefaultCase((state, action) => {
