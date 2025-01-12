@@ -95,10 +95,8 @@ export const updatePost = createAsyncThunk(
       // Báo lỗi theo custom để có thể hiển thị lên UI
       if (error.name === 'AxiosError' && error.response.status === 422) {
         return thunkAPI.rejectWithValue(error.response.data)
-      } else {
-        // Nếu không custom thì vẫn báo lỗi như bthg
-        throw error
       }
+      throw error
     }
   }
 )

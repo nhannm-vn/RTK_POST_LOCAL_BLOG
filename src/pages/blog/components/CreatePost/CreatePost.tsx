@@ -1,3 +1,4 @@
+import { unwrapResult } from '@reduxjs/toolkit'
 import { omit } from 'lodash'
 import { addPost, cancelEditingPost, updatePost } from 'pages/blog/blog.slice'
 import React, { Fragment, useEffect, useState } from 'react'
@@ -41,26 +42,32 @@ export default function CreatePost() {
 
   // Khi submmit thì chạy cái func này để lấy dữ liệu từ form
   //và sử dụng dispatch
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void = async (event) => {
     // Ngăn load lại
     event.preventDefault()
     if (editingPost) {
-      try {
-        // truyền vào cái Post mới nhất trên form
-        await dispatch(updatePost({ postId: editingPost.id, body: formData })).unwrap()
-      } catch (error: any) {
-        // Nếu có lỗi thì setState
-        setFormData(error.error)
-      }
+      dispatch(updatePost({ postId: editingPost.id, body: formData }))
+        .unwrap()
+        .then(() => {
+          // Update hoặc Public xong thì phải làm sạch sẽ lại cái form
+          // Nghĩa là thành công thì mới set lại cái form và có reset. Nghĩa là mới làm sách mấy cái ô nhập
+          setFormData(initialState)
+          if (errorForm) {
+            // Khi mà thành công thì cũng phải reset lại errorForm
+            setErrorForm(null)
+          }
+        })
+        .catch((err) => {
+          // Nếu update mà có lỗi thì setState lại
+          setErrorForm(err.error)
+        })
+      // Bình thường khi dispatch asyncThunk thì sẽ đóng gói. Nên cần mở gói cái
     } else {
       // Thêm id cho cục data form trước khi cập nhật lên
       // const formDataWithId = { ...formData, id: new Date().toISOString() }
       // console.log(formDataWithId)
       dispatch(addPost(omit(formData, ['id'])))
     }
-    // Sau khi thêm dữ liệu rồi thì làm sạch các ô nhập
-    //bằng cách set lại formData
-    setFormData(initialState)
   }
 
   const handleCancelEditingPost = () => {
@@ -125,7 +132,7 @@ export default function CreatePost() {
       <div className='mb-6'>
         <label
           htmlFor='publishDate'
-          className={`mb-2 block text-sm font-medium  dark:text-gray-300
+          className={`mb-2 block text-sm font-medium  dark:text-gray-300 
           ${errorForm?.publishDate ? 'text-red-700' : 'text-gray-900'}`}
         >
           Publish Date
@@ -133,7 +140,12 @@ export default function CreatePost() {
         <input
           type='datetime-local'
           id='publishDate'
-          className='block w-56 rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500'
+          className={`block w-56 rounded-lg border text-sm p-2.5 focus:outline-none
+            ${
+              errorForm?.publishDate
+                ? 'border-red-500 bg-red-50 text-red-900 placeholder-red-900 focus:border-red-500 focus:ring-red-500'
+                : 'border-gray-300 bg-gray-50 text-gray-900 focus:border-blue-500  focus:ring-blue-500 '
+            }`}
           placeholder='Title'
           required
           value={formData.publishDate}
@@ -141,6 +153,13 @@ export default function CreatePost() {
             setFormData((prev) => ({ ...prev, publishDate: event.target.value }))
           }}
         />
+        {/* Nếu có lỗi thì show text */}
+        {errorForm?.publishDate && ( //
+          <p className='mt-2 text-sm text-red-600'>
+            <span className='font-medium'>Lỗi!</span>
+            {errorForm.publishDate}
+          </p>
+        )}
       </div>
       <div className='mb-6 flex items-center'>
         <input
