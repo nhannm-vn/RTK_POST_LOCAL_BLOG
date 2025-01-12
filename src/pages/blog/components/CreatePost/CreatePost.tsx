@@ -33,11 +33,16 @@ export default function CreatePost() {
 
   // Khi submmit thì chạy cái func này để lấy dữ liệu từ form
   //và sử dụng dispatch
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // Ngăn load lại
     event.preventDefault()
     if (editingPost) {
-      dispatch(updatePost({ postId: editingPost.id, body: formData })) // truyền vào cái Post mới nhất trên form
+      try {
+        // truyền vào cái Post mới nhất trên form
+        await dispatch(updatePost({ postId: editingPost.id, body: formData })).unwrap()
+      } catch (error) {
+        console.log(error)
+      }
     } else {
       // Thêm id cho cục data form trước khi cập nhật lên
       // const formDataWithId = { ...formData, id: new Date().toISOString() }

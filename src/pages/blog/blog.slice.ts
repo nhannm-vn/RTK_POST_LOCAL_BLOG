@@ -85,11 +85,21 @@ export const addPost = createAsyncThunk(
 export const updatePost = createAsyncThunk(
   'blog/updatePost', //
   async ({ postId, body }: { postId: string; body: Post }, thunkAPI) => {
-    const response = await http.put<Post>(`posts/${postId}`, body, {
-      // Hủy resend 2 lần
-      signal: thunkAPI.signal
-    })
-    return response.data
+    try {
+      const response = await http.put<Post>(`posts/${postId}`, body, {
+        // Hủy resend 2 lần
+        signal: thunkAPI.signal
+      })
+      return response.data
+    } catch (error: any) {
+      // Báo lỗi theo custom để có thể hiển thị lên UI
+      if (error.name === 'AxiosError' && error.response.status === 422) {
+        return thunkAPI.rejectWithValue(error.response.data)
+      } else {
+        // Nếu không custom thì vẫn báo lỗi như bthg
+        throw error
+      }
+    }
   }
 )
 
@@ -225,7 +235,7 @@ const blogSlice = createSlice({
         }
       )
       .addDefaultCase((state, action) => {
-        console.log(`action type: ${action.type}`, current(state))
+        // console.log(`action type: ${action.type}`, current(state))
       })
   }
 })
