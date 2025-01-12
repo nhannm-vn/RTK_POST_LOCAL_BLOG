@@ -1,4 +1,3 @@
-import { unwrapResult } from '@reduxjs/toolkit'
 import { omit } from 'lodash'
 import { addPost, cancelEditingPost, updatePost } from 'pages/blog/blog.slice'
 import React, { Fragment, useEffect, useState } from 'react'
@@ -80,6 +79,8 @@ export default function CreatePost() {
 
   const handleCancelEditingPost = () => {
     dispatch(cancelEditingPost())
+    // Xóa lỗi luôn
+    setErrorForm(null)
   }
 
   return (
