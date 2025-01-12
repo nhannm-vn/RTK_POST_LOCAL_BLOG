@@ -14,9 +14,17 @@ const initialState: Post = {
   title: ''
 }
 
+// Kiểu dữ liệu cho errorForm
+interface ErrorForm {
+  publishDate: string
+}
+
 export default function CreatePost() {
   // Tạo cái state để lưu dữ liệu post từ form
   const [formData, setFormData] = useState<Post>(initialState)
+
+  // State để khi có error thì sẽ lưu vào để hiển thị lên UI
+  const [errorForm, setErrorForm] = useState<null | ErrorForm>(null)
 
   // Tạo dispatch chuyên dùng để cập nhật dữ liệu của redux
 
@@ -40,8 +48,9 @@ export default function CreatePost() {
       try {
         // truyền vào cái Post mới nhất trên form
         await dispatch(updatePost({ postId: editingPost.id, body: formData })).unwrap()
-      } catch (error) {
-        console.log(error)
+      } catch (error: any) {
+        // Nếu có lỗi thì setState
+        setFormData(error.error)
       }
     } else {
       // Thêm id cho cục data form trước khi cập nhật lên
@@ -114,7 +123,11 @@ export default function CreatePost() {
         </div>
       </div>
       <div className='mb-6'>
-        <label htmlFor='publishDate' className='mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300'>
+        <label
+          htmlFor='publishDate'
+          className={`mb-2 block text-sm font-medium  dark:text-gray-300
+          ${errorForm?.publishDate ? 'text-red-700' : 'text-gray-900'}`}
+        >
           Publish Date
         </label>
         <input
