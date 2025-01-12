@@ -42,7 +42,7 @@ export default function CreatePost() {
 
   // Khi submmit thì chạy cái func này để lấy dữ liệu từ form
   //và sử dụng dispatch
-  const handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void = async (event) => {
+  const handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void = (event) => {
     // Ngăn load lại
     event.preventDefault()
     if (editingPost) {
@@ -67,6 +67,14 @@ export default function CreatePost() {
       // const formDataWithId = { ...formData, id: new Date().toISOString() }
       // console.log(formDataWithId)
       dispatch(addPost(omit(formData, ['id'])))
+        .unwrap()
+        .then(() => {
+          setFormData(initialState)
+          if (errorForm) setErrorForm(null)
+        })
+        .catch((error) => {
+          setErrorForm(error.error)
+        })
     }
   }
 

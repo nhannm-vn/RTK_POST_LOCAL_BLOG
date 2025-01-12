@@ -74,11 +74,19 @@ export const getPostList = createAsyncThunk(
 export const addPost = createAsyncThunk(
   'blog/addPost', //
   async (body: Omit<Post, 'id'>, thunkAPI) => {
-    const response = await http.post<Post>('posts', body, {
-      // Hủy resend 2 lần
-      signal: thunkAPI.signal
-    })
-    return response.data
+    try {
+      const response = await http.post<Post>('posts', body, {
+        // Hủy resend 2 lần
+        signal: thunkAPI.signal
+      })
+      return response.data
+    } catch (error: any) {
+      // Báo lỗi theo custom để có thể hiển thị lên UI
+      if (error.name === 'AxiosError' && error.response.status === 422) {
+        return thunkAPI.rejectWithValue(error.response.data)
+      }
+      throw error
+    }
   }
 )
 
