@@ -46,6 +46,20 @@ export const blogApi = createApi({
         const final = [{ type: 'Posts' as const, id: 'LIST' }]
         return final
       }
+    }),
+    // Chúng ta dùng mutation đối với các trường hợp PUT, POST, DELETE
+    addPost: build.mutation<Post, Omit<Post, 'id'>>({
+      query: (body) => ({
+        url: 'posts',
+        method: 'POST',
+        body
+      }),
+      /**
+       * invalidatesTags cung cấp các tag để báo hiệu cho những method nào có providesTags
+       * match với nó sẽ bị gọi lại
+       * Trong trường hợp này getPosts sẽ chạy lại
+       */
+      invalidatesTags: (result, error, body) => [{ type: 'Posts', id: 'LIST' }]
     })
   })
 })
