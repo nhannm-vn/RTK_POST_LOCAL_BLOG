@@ -1,4 +1,4 @@
-import { useAddPostMutation, useGetPostQuery } from 'pages/blog/blog.service'
+import { useAddPostMutation, useGetPostQuery, useUpdatePostMutation } from 'pages/blog/blog.service'
 import { cancelEditPost } from 'pages/blog/blog.slice'
 import { Fragment, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -33,6 +33,8 @@ export default function CreatePost() {
   // Khi vào lần đầu hoặc data có thay đổi thì set lại form
   useEffect(() => {
     if (data) {
+      // Lúc update thì form data của chúng ta chứa thằng Post có id sẵn
+      //còn lúc add thì chỉ lấy 4 giá trị còn id thì json.server tự cho
       setFormData(data)
     }
   }, [data])
@@ -40,13 +42,28 @@ export default function CreatePost() {
   // addPost
   const [addPost, addPostResult] = useAddPostMutation()
 
+  // updatePost
+  const [updatePost, updatePostResult] = useUpdatePostMutation()
+
   // addPost
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     // Ngăn load lại
     event.preventDefault()
-    await addPost(formData).unwrap()
-    // clear form data
-    setFormData(initialState)
+    if (postId) {
+      // có postId nghĩa là đang muốn update
+      await updatePost({
+        id: postId,
+        body: formData as Post
+      }).unwrap()
+      // reset
+      handleCancelEdit()
+      // get lại cái cho nó xóa cache
+      refetch()
+    } else {
+      await addPost(formData).unwrap()
+      // clear form data
+      setFormData(initialState)
+    }
   }
 
   // cancelEditPost
