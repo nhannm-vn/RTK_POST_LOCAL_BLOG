@@ -1,9 +1,13 @@
 // module config
 import { configureStore } from '@reduxjs/toolkit'
+import blogReducer from 'pages/blog/blog.slice'
 // ...
 
 export const store = configureStore({
-  reducer: {}
+  reducer: {
+    // Dat cai key ten la blog
+    blog: blogReducer
+  }
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
