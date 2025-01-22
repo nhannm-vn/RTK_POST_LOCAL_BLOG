@@ -30,7 +30,7 @@ server.use((req, res, next) => {
   setTimeout(() => {
     // Tiếp tục trả về cho client
     next()
-  }, 2500)
+  }, 2000)
 })
 
 // Use default router
