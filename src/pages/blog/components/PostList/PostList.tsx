@@ -1,4 +1,4 @@
-import { useGetPostsQuery } from 'pages/blog/blog.service'
+import { useDeletePostMutation, useGetPostsQuery } from 'pages/blog/blog.service'
 import PostItem from '../PostItem'
 import { Fragment } from 'react/jsx-runtime'
 import SkeletonPost from '../SkeletonPost'
@@ -15,6 +15,12 @@ export default function PostList() {
   // method start edit post
   const startEdit = (id: string) => {
     dispatch(startEditPost(id))
+  }
+
+  // delete post
+  const [deletePost] = useDeletePostMutation()
+  const handleDeletePost = (id: string) => {
+    deletePost(id)
   }
 
   return (
@@ -36,7 +42,7 @@ export default function PostList() {
           {!isFetching &&
             data &&
             data.map((post) => {
-              return <PostItem key={post.id} post={post} startEdit={startEdit} />
+              return <PostItem key={post.id} post={post} startEdit={startEdit} handleDeletePost={handleDeletePost} />
             })}
         </div>
       </div>
