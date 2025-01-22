@@ -65,4 +65,4 @@ export const blogApi = createApi({
 })
 
 // export
-export const { useGetPostsQuery } = blogApi
+export const { useGetPostsQuery, useAddPostMutation } = blogApi
