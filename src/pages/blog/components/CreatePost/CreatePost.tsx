@@ -1,7 +1,8 @@
-import { useAddPostMutation } from 'pages/blog/blog.service'
+import { useAddPostMutation, useGetPostQuery } from 'pages/blog/blog.service'
 import { cancelEditPost } from 'pages/blog/blog.slice'
-import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { Fragment, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from 'store'
 import Post from 'types/blog.type'
 
 // initialState
@@ -17,6 +18,24 @@ export default function CreatePost() {
   const dispatch = useDispatch()
   // state để quản lí form
   const [formData, setFormData] = useState<Omit<Post, 'id'> | Post>(initialState)
+
+  // lấy postId để get post và hiển thị trên form
+  //mà giá trị đó chính là được lưu trong state của redux
+  const postId = useSelector((state: RootState) => state.blog.postId)
+
+  // get post
+  // Vì mình mong muốn nó chỉ gọi getPost khi có id thôi
+  //còn không có id thì đừng gọi để nhằm lẫn getPosts
+  const { data, refetch } = useGetPostQuery(postId, { skip: !postId })
+  //refetch để giúp hồi khi update thì sẽ get lại để cho nó kịp đồng bộ để lấy thì sẽ có
+  //nhằm xóa cái cache tạm thời
+
+  // Khi vào lần đầu hoặc data có thay đổi thì set lại form
+  useEffect(() => {
+    if (data) {
+      setFormData(data)
+    }
+  }, [data])
 
   // addPost
   const [addPost, addPostResult] = useAddPostMutation()
@@ -34,6 +53,7 @@ export default function CreatePost() {
   // method cancel edit post
   const handleCancelEdit = () => {
     dispatch(cancelEditPost())
+    setFormData(initialState)
   }
 
   return (
@@ -120,33 +140,39 @@ export default function CreatePost() {
         </label>
       </div>
       <div>
-        <button
-          className='group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 p-0.5 text-sm font-medium text-gray-900 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 group-hover:from-purple-600 group-hover:to-blue-500 dark:text-white dark:focus:ring-blue-800'
-          type='submit'
-        >
-          <span className='relative rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-gray-900'>
-            Publish Post
-          </span>
-        </button>
-        <button
-          type='submit'
-          className='group relative mb-2 mr-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-teal-300 to-lime-300 p-0.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-4 focus:ring-lime-200 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 dark:focus:ring-lime-800'
-        >
-          <span className='relative rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-gray-900'>
-            Update Post
-          </span>
-        </button>
-        <button
-          type='reset'
-          className='group relative mb-2 mr-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-red-200 via-red-300 to-yellow-200 p-0.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-4 focus:ring-red-100 group-hover:from-red-200 group-hover:via-red-300 group-hover:to-yellow-200 dark:text-white dark:hover:text-gray-900 dark:focus:ring-red-400'
-          onClick={() => {
-            handleCancelEdit()
-          }}
-        >
-          <span className='relative rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-gray-900'>
-            Cancel
-          </span>
-        </button>
+        {Boolean(!postId) && (
+          <button
+            className='group relative inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 p-0.5 text-sm font-medium text-gray-900 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300 group-hover:from-purple-600 group-hover:to-blue-500 dark:text-white dark:focus:ring-blue-800'
+            type='submit'
+          >
+            <span className='relative rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-gray-900'>
+              Publish Post
+            </span>
+          </button>
+        )}
+        {Boolean(postId) && (
+          <Fragment>
+            <button
+              type='submit'
+              className='group relative mb-2 mr-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-teal-300 to-lime-300 p-0.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-4 focus:ring-lime-200 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 dark:focus:ring-lime-800'
+            >
+              <span className='relative rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-gray-900'>
+                Update Post
+              </span>
+            </button>
+            <button
+              type='reset'
+              className='group relative mb-2 mr-2 inline-flex items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-red-200 via-red-300 to-yellow-200 p-0.5 text-sm font-medium text-gray-900 focus:outline-none focus:ring-4 focus:ring-red-100 group-hover:from-red-200 group-hover:via-red-300 group-hover:to-yellow-200 dark:text-white dark:hover:text-gray-900 dark:focus:ring-red-400'
+              onClick={() => {
+                handleCancelEdit()
+              }}
+            >
+              <span className='relative rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-gray-900'>
+                Cancel
+              </span>
+            </button>
+          </Fragment>
+        )}
       </div>
     </form>
   )

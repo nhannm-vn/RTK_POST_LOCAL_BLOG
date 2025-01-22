@@ -60,9 +60,12 @@ export const blogApi = createApi({
        * Trong trường hợp này getPosts sẽ chạy lại
        */
       invalidatesTags: (result, error, body) => [{ type: 'Posts', id: 'LIST' }]
+    }),
+    getPost: build.query<Post, string>({
+      query: (id) => `posts/${id}`
     })
   })
 })
 
 // export
-export const { useGetPostsQuery, useAddPostMutation } = blogApi
+export const { useGetPostsQuery, useAddPostMutation, useGetPostQuery } = blogApi
