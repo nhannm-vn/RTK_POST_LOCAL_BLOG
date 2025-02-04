@@ -14,6 +14,17 @@ const initialState: Omit<Post, 'id'> = {
   title: ''
 }
 
+// Đây là type lỗi 422 EntityError dùng để hiển thị lỗi ngay trên form khi post hoặc put
+/**
+ * Mẹo copy các key của kiểu Omit<Post, 'id'> để làm key cho kiểu FormError
+ */
+// Lưu ý khi xài mẹo này thì phải xài type chứ không được dùng interface
+type FormError =
+  | {
+      [key in keyof Omit<Post, 'id'>]: string
+    }
+  | null
+
 export default function CreatePost() {
   const dispatch = useDispatch()
   // state để quản lí form
@@ -78,6 +89,17 @@ export default function CreatePost() {
     dispatch(cancelEditPost())
     setFormData(initialState)
   }
+
+  // -------------------------------------------
+  // Xử lí lỗi
+  /**
+   * Lỗi có thể đến từ `addPostResult` hoặc `updatePostResult`
+   * Vậy chúng ta sẽ dựa vào điều kiện có postId hoặc không có (tức đang trong chế độ edit hay không) để show lỗi
+   *
+   * Chúng ta cũng không cần thiết phải tạo một state errorForm
+   * Vì errorForm phụ thuộc vào `addPostResult`, `updatePostResult` và `postId` nên có thể dùng một biến để tính toán
+   */
+  // const errorForm: FormError
 
   return (
     <form onSubmit={handleSubmit}>
