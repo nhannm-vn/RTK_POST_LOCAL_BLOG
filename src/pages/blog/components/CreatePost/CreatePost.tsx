@@ -4,6 +4,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'store'
 import Post from 'types/blog.type'
+import { isFetchBaseQueryError } from 'utils/helpers'
 
 // initialState
 const initialState: Omit<Post, 'id'> = {
@@ -105,6 +106,7 @@ export default function CreatePost() {
     // Vì errorResult có thể là FetchBaseQueryError | SerializedError | undefined, mỗi kiểu lại có cấu trúc khác nhau
     // nên chúng ta cần kiểm tra để hiển thị cho đúng
     // ***Lưu ý ở đây thì chúng ta chỉ check các lỗi là EntityError liên quan đến post put để mà hiển thị lên form
+
     console.log(errrorResult)
     return errrorResult as any
   }, [postId, addPostResult, updatePostResult])
