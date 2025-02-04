@@ -65,12 +65,12 @@ export default function CreatePost() {
       setFormData(initialState)
     }
   }
-  console.log(
-    `Nam moi code dau thang do
-    Cot dien nen la cot chien nhe
-    Co gang no luc nhieu hon nua nhe
-    Dam me la khong tu bo`
-  )
+  // console.log(
+  //   `Nam moi code dau thang do
+  //   Cot dien nen la cot chien nhe
+  //   Co gang no luc nhieu hon nua nhe
+  //   Dam me la khong tu bo`
+  // )
 
   // cancelEditPost
   // method cancel edit post
