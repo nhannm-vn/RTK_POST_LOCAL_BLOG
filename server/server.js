@@ -26,6 +26,14 @@ server.use((req, res, next) => {
         }
       })
     }
+    // Tạo lỗi để test code xử lí lỗi
+    // Nếu người dùng gửi lên trong body mà có title = admin thì tạo cái lỗi
+    // *test lỗi trả về mà chỉ có message
+    if (req.body.title === 'admin') {
+      return res.status(500).send({
+        error: 'Server bi loi'
+      })
+    }
   }
   setTimeout(() => {
     // Tiếp tục trả về cho client

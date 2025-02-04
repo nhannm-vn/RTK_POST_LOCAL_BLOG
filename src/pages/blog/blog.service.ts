@@ -1,6 +1,7 @@
 // import
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import Post from 'types/blog.type'
+import { CustomError } from 'utils/helpers'
 
 export const blogApi = createApi({
   reducerPath: 'blogApi', // Ten field trong state cua redux
@@ -49,11 +50,20 @@ export const blogApi = createApi({
     }),
     // Chúng ta dùng mutation đối với các trường hợp PUT, POST, DELETE
     addPost: build.mutation<Post, Omit<Post, 'id'>>({
-      query: (body) => ({
-        url: 'posts',
-        method: 'POST',
-        body
-      }),
+      query(body) {
+        try {
+          // throw Error('Ehehehe')
+          // let a: any = null
+          // a.b = 1
+          return {
+            url: 'posts',
+            method: 'POST',
+            body
+          }
+        } catch (error: any) {
+          throw new CustomError(error.message)
+        }
+      },
       /**
        * invalidatesTags cung cấp các tag để báo hiệu cho những method nào có providesTags
        * match với nó sẽ bị gọi lại

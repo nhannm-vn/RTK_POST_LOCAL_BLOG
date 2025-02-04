@@ -5,7 +5,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'store'
 import Post from 'types/blog.type'
-import { isEntityError, isFetchBaseQueryError } from 'utils/helpers'
+import { isEntityError } from 'utils/helpers'
 
 // initialState
 const initialState: Omit<Post, 'id'> = {
