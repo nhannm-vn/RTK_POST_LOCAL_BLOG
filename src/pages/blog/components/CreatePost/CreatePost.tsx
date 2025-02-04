@@ -4,7 +4,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'store'
 import Post from 'types/blog.type'
-import { isFetchBaseQueryError } from 'utils/helpers'
+import { isEntityError, isFetchBaseQueryError } from 'utils/helpers'
 
 // initialState
 const initialState: Omit<Post, 'id'> = {
@@ -102,13 +102,19 @@ export default function CreatePost() {
    */
   const errorForm: FormError = useMemo(() => {
     // Dựa vào postId để check trạng thái đang làm gì
-    const errrorResult = postId ? updatePostResult.error : addPostResult.error
+    const errorResult = postId ? updatePostResult.error : addPostResult.error
     // Vì errorResult có thể là FetchBaseQueryError | SerializedError | undefined, mỗi kiểu lại có cấu trúc khác nhau
     // nên chúng ta cần kiểm tra để hiển thị cho đúng
     // ***Lưu ý ở đây thì chúng ta chỉ check các lỗi là EntityError liên quan đến post put để mà hiển thị lên form
-
-    console.log(errrorResult)
-    return errrorResult as any
+    if (isEntityError(errorResult)) {
+      // Vào tới đây chắc chắn là lỗi EntityError 422
+      // Có thể ép kiểu một cách an toàn chỗ này, vì chúng ta đã kiểm tra chắc chắn rồi
+      // Nếu không muốn ép kiểu thì có thể khai báo cái interface `EntityError` sao cho data.error tương đồng với FormError là được
+      return errorResult.data.error as FormError
+    }
+    // Còn nếu không phải EntityError thì return null
+    //vì mình chỉ muốn xủa lí các cái lỗi liên quan đến post put thôi còn các lỗi khác thì mình sẽ cho toast lên
+    return null
   }, [postId, addPostResult, updatePostResult])
 
   return (
