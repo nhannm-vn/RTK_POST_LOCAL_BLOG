@@ -1,6 +1,6 @@
 import { useAddPostMutation, useGetPostQuery, useUpdatePostMutation } from 'pages/blog/blog.service'
 import { cancelEditPost } from 'pages/blog/blog.slice'
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from 'store'
 import Post from 'types/blog.type'
@@ -99,7 +99,15 @@ export default function CreatePost() {
    * Chúng ta cũng không cần thiết phải tạo một state errorForm
    * Vì errorForm phụ thuộc vào `addPostResult`, `updatePostResult` và `postId` nên có thể dùng một biến để tính toán
    */
-  // const errorForm: FormError
+  const errorForm: FormError = useMemo(() => {
+    // Dựa vào postId để check trạng thái đang làm gì
+    const errrorResult = postId ? updatePostResult.error : addPostResult.error
+    // Vì errorResult có thể là FetchBaseQueryError | SerializedError | undefined, mỗi kiểu lại có cấu trúc khác nhau
+    // nên chúng ta cần kiểm tra để hiển thị cho đúng
+    // ***Lưu ý ở đây thì chúng ta chỉ check các lỗi là EntityError liên quan đến post put để mà hiển thị lên form
+    console.log(errrorResult)
+    return errrorResult as any
+  }, [postId, addPostResult, updatePostResult])
 
   return (
     <form onSubmit={handleSubmit}>
