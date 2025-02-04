@@ -11,6 +11,21 @@
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query'
 
 /**
+ * Kiểu ErrorFormObject dành cho trường hợp bao quát
+ */
+// Đây là kiểu chuẩn bao quát cho error
+interface ErrorFormObject {
+  [key: string | number]: string | ErrorFormObject | ErrorFormObject[]
+}
+
+interface EntityError {
+  status: 422
+  data: {
+    error: ErrorFormObject
+  }
+}
+
+/**
  * Thu hẹp một error có kiểu không xác định về `FetchBaseQueryError`
  */
 
@@ -25,4 +40,18 @@ export function isFetchBaseQueryError(error: unknown): error is FetchBaseQueryEr
 
 export function isErrorWithMessage(error: unknown): error is { message: string } {
   return typeof error === 'object' && error !== null && 'message' in error && typeof (error as any).message === 'string'
+}
+
+/**
+ * Thu hẹp một error có kiểu không xác định về lỗi liên quan đến POST PUT không đúng field (EntityError)
+ */
+export function isEntityError(error: unknown): error is EntityError {
+  // Đầu tiên nó phải là isFetchBaseQueryError
+  return (
+    isFetchBaseQueryError(error) &&
+    error.status === 422 &&
+    typeof error.data === 'object' &&
+    error.data !== null &&
+    !(error.data instanceof Array)
+  )
 }
