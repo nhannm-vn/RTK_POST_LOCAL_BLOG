@@ -7,6 +7,11 @@ export const blogApi = createApi({
   reducerPath: 'blogApi', // Ten field trong state cua redux
   tagTypes: ['Posts'],
   // Những thằng tag này nó sẽ quản lí việc ép thằng nào fetch api lại hay không
+  keepUnusedDataFor: 10,
+  // Config thời gian unsubcription
+  // Điều nãy nghĩa là mình sẽ setting global giúp cho nó bao nhiêu s thì xóa cache
+  //giúp cho nó có thể get item mới
+  //nó cũng có thể setting cho từng thằng ở dưới
   baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:4000/' }), // url ma chung ta dung de fetch api
   //
   // endPoints là tập hợp của những method giúp get, post, put, delete, ... tương tác với server
