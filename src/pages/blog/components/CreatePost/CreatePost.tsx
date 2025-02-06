@@ -37,14 +37,20 @@ export default function CreatePost() {
   const postId = useSelector((state: RootState) => state.blog.postId)
 
   // get post
-  // Vì mình mong muốn nó chỉ gọi getPost khi có id thôi
-  //còn không có id thì đừng gọi để nhằm lẫn getPosts
-  // **refetchOnMountOrArgChange thằng này giúp cho fetch lại dữ liệu mỗi khi
-  //hook này chạy // nếu truyền boolean thì mỗi lần chạy thì nó fetch lại luôn, còn nếu mà mình truyền number
-  //thì nó sẽ cho thời gian delay là 5s
-  const { data, refetch } = useGetPostQuery(postId, { skip: !postId, refetchOnMountOrArgChange: true })
   //refetch để giúp hồi khi update thì sẽ get lại để cho nó kịp đồng bộ để lấy thì sẽ có
   //khi mình lấy method refetch này nó sẽ giúp mình fetch lại thêm lần nữa
+  const { data, refetch } = useGetPostQuery(postId, {
+    // Vì mình mong muốn nó chỉ gọi getPost khi có id thôi
+    //còn không có id thì đừng gọi để nhằm lẫn getPosts
+    skip: !postId,
+    // **refetchOnMountOrArgChange thằng này giúp cho fetch lại dữ liệu mỗi khi
+    //hook này chạy // nếu truyền boolean thì mỗi lần chạy thì nó fetch lại luôn, còn nếu mà mình truyền number
+    //thì nó sẽ cho thời gian delay là 5s
+    refetchOnMountOrArgChange: true,
+    // Thằng này khi hook chạy thì tùy theo thời gian mà nó sẽ gọi lại
+    //áp dụng cho real time những trang mà cần thời gian thực hiệu quả
+    pollingInterval: 1000
+  })
 
   // Khi vào lần đầu hoặc data có thay đổi thì set lại form
   useEffect(() => {
