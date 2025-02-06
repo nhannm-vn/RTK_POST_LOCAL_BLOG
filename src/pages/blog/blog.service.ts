@@ -84,7 +84,19 @@ export const blogApi = createApi({
       invalidatesTags: (result, error, body) => (error ? [] : [{ type: 'Posts', id: 'LIST' }])
     }),
     getPost: build.query<Post, string>({
-      query: (id) => `posts/${id}`
+      query(id) {
+        return {
+          url: `posts/${id}`,
+          headers: {
+            hello: 'I am Nhan'
+          },
+          // Cách để mong muốn url có thêm đường dẫn như kiểu param ?first_name=nguyen&last_name=nhan
+          params: {
+            first_name: 'nguyen',
+            'last-name': 'nhan'
+          }
+        }
+      }
     }),
     updatePost: build.mutation<Post, { id: string; body: Post }>({
       query(data) {
