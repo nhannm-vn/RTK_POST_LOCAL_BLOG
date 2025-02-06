@@ -12,7 +12,14 @@ export const blogApi = createApi({
   // Điều nãy nghĩa là mình sẽ setting global giúp cho nó bao nhiêu s thì xóa cache
   //giúp cho nó có thể get item mới
   //nó cũng có thể setting cho từng thằng ở dưới
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:4000/' }), // url ma chung ta dung de fetch api
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'http://localhost:4000/',
+    // custom để khi fetch thì truyền lên thêm một vài thứ
+    prepareHeaders(headers) {
+      headers.set('authorization', 'Bearer ABCXYZ')
+      return headers
+    }
+  }), // url ma chung ta dung de fetch api
   //
   // endPoints là tập hợp của những method giúp get, post, put, delete, ... tương tác với server
   // khi khai báo endPoints nó sẽ sinh ra cho chúng ta các hook tương tự để dùng trong component
