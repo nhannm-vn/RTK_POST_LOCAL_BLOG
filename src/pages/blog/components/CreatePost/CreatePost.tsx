@@ -41,7 +41,7 @@ export default function CreatePost() {
   //còn không có id thì đừng gọi để nhằm lẫn getPosts
   const { data, refetch } = useGetPostQuery(postId, { skip: !postId })
   //refetch để giúp hồi khi update thì sẽ get lại để cho nó kịp đồng bộ để lấy thì sẽ có
-  //nhằm xóa cái cache tạm thời
+  //khi mình lấy method refetch này nó sẽ giúp mình fetch lại thêm lần nữa
 
   // Khi vào lần đầu hoặc data có thay đổi thì set lại form
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function CreatePost() {
       // reset
       handleCancelEdit()
       // get lại cái cho nó xóa cache
-      refetch()
+      // refetch()
     } else {
       await addPost(formData).unwrap()
       // clear form data
@@ -121,6 +121,20 @@ export default function CreatePost() {
 
   return (
     <form onSubmit={handleSubmit}>
+      <button
+        className='group relative inline-flex items-center justify-center overflow-hidden 
+        rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 p-0.5 text-sm font-medium
+         text-gray-900 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-300
+          group-hover:from-purple-600 group-hover:to-blue-500 dark:text-white dark:focus:ring-blue-800'
+        type='button'
+        onClick={() => {
+          refetch()
+        }}
+      >
+        <span className='relative rounded-md bg-white px-5 py-2.5 transition-all duration-75 ease-in group-hover:bg-opacity-0 dark:bg-gray-900'>
+          Force Fetch
+        </span>
+      </button>
       <div className='mb-6'>
         <label htmlFor='title' className='mb-2 block text-sm font-medium text-gray-900 dark:text-gray-300'>
           Title
